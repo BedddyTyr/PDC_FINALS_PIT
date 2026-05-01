@@ -1,0 +1,18 @@
+[gd_scene format=3 uid="uid://xxvrc4j0n3l8"]
+
+[ext_resource type="Script" uid="uid://cmu8bj07tosr5" path="res://Scenes/Lobby.cs" id="1_bpe3w"]
+
+[node name="Lobby" type="Node2D" unique_id=453714149]
+script = ExtResource("1_bpe3w")
+
+[node name="CanvasLayer" type="CanvasLayer" parent="." unique_id=1500589651]
+
+[node name="VBoxContainer" type="VBoxContainer" parent="CanvasLayer" unique_id=962400145]
+offset_right = 40.0
+offset_bottom = 40.0
+
+[node name="StatusLabel" type="Label" parent="CanvasLayer/VBoxContainer" unique_id=138926325]
+layout_mode = 2
+
+[node name="DisconnectButton" type="Button" parent="CanvasLayer/VBoxContainer" unique_id=269248195]
+layout_mode = 2
