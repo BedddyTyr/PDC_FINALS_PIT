@@ -1,0 +1,27 @@
+[gd_scene format=3 uid="uid://cqq20to8vr6k1"]
+
+[ext_resource type="Script" uid="uid://b7xmc5vq6pt5u" path="res://HostLobby.cs" id="1_faymq"]
+
+[node name="HostLobby" type="Node2D" unique_id=501477342]
+script = ExtResource("1_faymq")
+
+[node name="CanvasLayer" type="CanvasLayer" parent="." unique_id=1569806049]
+
+[node name="VBoxContainer" type="VBoxContainer" parent="CanvasLayer" unique_id=692549372]
+offset_right = 40.0
+offset_bottom = 40.0
+
+[node name="TitleLabel" type="Label" parent="CanvasLayer/VBoxContainer" unique_id=1992095823]
+layout_mode = 2
+
+[node name="RoomCodeLabel" type="Label" parent="CanvasLayer/VBoxContainer" unique_id=431895082]
+layout_mode = 2
+
+[node name="IPLabel" type="Label" parent="CanvasLayer/VBoxContainer" unique_id=1673086991]
+layout_mode = 2
+
+[node name="PlayersLabel" type="Label" parent="CanvasLayer/VBoxContainer" unique_id=1752296574]
+layout_mode = 2
+
+[node name="DisconnectButton" type="Button" parent="CanvasLayer/VBoxContainer" unique_id=147844100]
+layout_mode = 2

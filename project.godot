@@ -15,6 +15,10 @@ run/main_scene="uid://cm4akygggp4kx"
 config/features=PackedStringArray("4.6", "C#", "GL Compatibility")
 config/icon="res://icon.svg"
 
+[autoload]
+
+NetworkManager="*uid://bydgqyq4x1vve"
+
 [dotnet]
 
 project/assembly_name="MULTIPLAYER LAN"

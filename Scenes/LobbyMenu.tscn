@@ -1,0 +1,27 @@
+[gd_scene format=3 uid="uid://hx7pjkdgee50"]
+
+[ext_resource type="Script" uid="uid://8vb41d8l0muw" path="res://LobbyMenu.cs" id="1_fbe1o"]
+
+[node name="LobbyMenu" type="Node2D" unique_id=1684476527]
+script = ExtResource("1_fbe1o")
+
+[node name="CanvasLayer" type="CanvasLayer" parent="." unique_id=1116459107]
+
+[node name="Label" type="Label" parent="CanvasLayer" unique_id=670399057]
+offset_right = 40.0
+offset_bottom = 23.0
+
+[node name="ScrollContainer" type="ScrollContainer" parent="CanvasLayer" unique_id=12288957]
+offset_right = 40.0
+offset_bottom = 40.0
+
+[node name="LobbyList" type="VBoxContainer" parent="CanvasLayer/ScrollContainer" unique_id=1095799628]
+layout_mode = 2
+
+[node name="RefreshButton" type="Button" parent="CanvasLayer" unique_id=501086661]
+offset_right = 8.0
+offset_bottom = 8.0
+
+[node name="BackButton" type="Button" parent="CanvasLayer" unique_id=577808684]
+offset_right = 8.0
+offset_bottom = 8.0

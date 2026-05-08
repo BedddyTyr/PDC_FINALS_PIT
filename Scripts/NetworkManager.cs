@@ -1,23 +1,54 @@
 using Godot;
+using System.Collections.Generic;
 
 public partial class NetworkManager : Node
 {
 	private const int PORT = 7777;
 	public static int MaxPlayers { get; private set; } = 2;
 	public static NetworkManager Instance { get; private set; }
+	public static string RoomCode { get; private set; } = "";
+	public static string HostIP { get; private set; } = "";
 
 	public override void _Ready()
 	{
+		if (Instance != null)
+		{
+			QueueFree();
+			return;
+		}
+
 		Instance = this;
 
-		Multiplayer.PeerConnected += (id) => 
+		// Add LobbyDiscovery as child
+		var lobbyDiscovery = new LobbyDiscovery();
+		AddChild(lobbyDiscovery);
+
+		Multiplayer.PeerConnected += (id) =>
 			GD.Print($"Player {id} connected!");
-		Multiplayer.PeerDisconnected += (id) => 
+		Multiplayer.PeerDisconnected += (id) =>
 			GD.Print($"Player {id} disconnected!");
-		Multiplayer.ConnectedToServer += () => 
+		Multiplayer.ConnectedToServer += () =>
 			GD.Print("Successfully joined!");
-		Multiplayer.ConnectionFailed += () => 
+		Multiplayer.ConnectionFailed += () =>
 			GD.Print("Connection failed!");
+	}
+
+	public string GetLocalIP()
+	{
+		foreach (var ip in IP.GetLocalAddresses())
+		{
+			if (ip.Contains(".") && !ip.StartsWith("127"))
+				return ip;
+		}
+		return "127.0.0.1";
+	}
+
+	public string GenerateRoomCode()
+	{
+		var random = new System.Random();
+		RoomCode = random.Next(1000, 9999).ToString();
+		HostIP = GetLocalIP();
+		return RoomCode;
 	}
 
 	public void HostGame(int playerCount)
@@ -34,7 +65,13 @@ public partial class NetworkManager : Node
 		}
 
 		Multiplayer.MultiplayerPeer = peer;
-		GD.Print($"Hosting for {MaxPlayers} players on port {PORT}");
+
+		// Start broadcasting lobby
+		string hostName = OS.GetEnvironment("USERNAME");
+		LobbyDiscovery.Instance.StartBroadcasting(
+			hostName, MaxPlayers);
+
+		GD.Print($"Hosting for {MaxPlayers} players!");
 	}
 
 	public void JoinGame(string ip)
@@ -49,11 +86,16 @@ public partial class NetworkManager : Node
 		}
 
 		Multiplayer.MultiplayerPeer = peer;
-		GD.Print($"Joining game at {ip}:{PORT}");
+
+		// Stop listening after joining
+		LobbyDiscovery.Instance.StopAll();
+
+		GD.Print($"Joining game at {ip}!");
 	}
 
 	public void DisconnectGame()
 	{
+		LobbyDiscovery.Instance?.StopAll();
 		Multiplayer.MultiplayerPeer = null;
 		GD.Print("Disconnected.");
 	}

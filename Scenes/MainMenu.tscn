@@ -20,15 +20,6 @@ offset_bottom = 20.0
 grow_horizontal = 2
 grow_vertical = 2
 
-[node name="TitleLabel" type="Label" parent="CanvasLayer/VBoxContainer" unique_id=1885011463]
-layout_mode = 2
-
-[node name="PlayerCountOption" type="OptionButton" parent="CanvasLayer/VBoxContainer" unique_id=110356769]
-layout_mode = 2
-
-[node name="IpInput" type="LineEdit" parent="CanvasLayer/VBoxContainer" unique_id=994602220]
-layout_mode = 2
-
 [node name="HostButton" type="Button" parent="CanvasLayer/VBoxContainer" unique_id=1867999816]
 layout_mode = 2
 

@@ -1,0 +1,27 @@
+[gd_scene format=3 uid="uid://dqt75i7dv3auk"]
+
+[ext_resource type="Script" uid="uid://wi43dm1cu4rr" path="res://JoinLobby.cs" id="1_ynbvv"]
+
+[node name="JoinLobby" type="Node2D" unique_id=1571673553]
+script = ExtResource("1_ynbvv")
+
+[node name="CanvasLayer" type="CanvasLayer" parent="." unique_id=219407398]
+
+[node name="VBoxContainer" type="VBoxContainer" parent="CanvasLayer" unique_id=1181894843]
+offset_right = 40.0
+offset_bottom = 40.0
+
+[node name="TitleLabel" type="Label" parent="CanvasLayer/VBoxContainer" unique_id=1133015003]
+layout_mode = 2
+
+[node name="PlayersLabel" type="Label" parent="CanvasLayer/VBoxContainer" unique_id=267670606]
+layout_mode = 2
+
+[node name="StatusLabel" type="Label" parent="CanvasLayer/VBoxContainer" unique_id=1527774691]
+layout_mode = 2
+
+[node name="ReadyButton" type="Button" parent="CanvasLayer/VBoxContainer" unique_id=647903728]
+layout_mode = 2
+
+[node name="DisconnectButton" type="Button" parent="CanvasLayer/VBoxContainer" unique_id=2017923122]
+layout_mode = 2
