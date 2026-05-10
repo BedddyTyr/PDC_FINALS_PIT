@@ -1,0 +1,14 @@
+[gd_resource type="Resource" script_class="Card" format=3 uid="uid://cgkmlhckldixl"]
+
+[ext_resource type="Script" uid="uid://7d5jbdpdranw" path="res://Custom_resource/card_effect.gd" id="1_ieep0"]
+[ext_resource type="Script" uid="uid://d2jlaigh8wuy4" path="res://Custom_resource/card.gd" id="2_7d51f"]
+
+[resource]
+script = ExtResource("2_7d51f")
+id = "Defence_BUFF_DEF"
+card_name = "Defence"
+description = "Adds 20 defence"
+type = "Defence"
+target = 0
+defense = 20
+metadata/_custom_type_script = "uid://d2jlaigh8wuy4"

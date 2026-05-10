@@ -1,0 +1,7 @@
+[gd_resource type="Theme" format=3 uid="uid://3dkjql5r7c4y"]
+
+[ext_resource type="FontFile" uid="uid://c33q7bqclf3yd" path="res://Assets/Samples/sh-pinscher/SHPinscher-Regular.otf" id="1_a3rhm"]
+
+[resource]
+default_font = ExtResource("1_a3rhm")
+default_font_size = 25

@@ -1,0 +1,180 @@
+[gd_scene format=3 uid="uid://bvnr1228pcn8t"]
+
+[ext_resource type="Texture2D" uid="uid://dbnhej1nulphv" path="res://Assets/Samples/BackGround/BackGround/Castle/Castle Bridge BackGround.png" id="1_2ff43"]
+[ext_resource type="Script" uid="uid://dc2lhm2j4boru" path="res://Scenes/UI/hand.gd" id="2_qyn4e"]
+[ext_resource type="PackedScene" uid="uid://cnrlupaunsf2t" path="res://Scenes/Card_UI/CardUI.tscn" id="2_uj7r0"]
+[ext_resource type="Texture2D" uid="uid://44wn3htb1qaf" path="res://Assets/Samples/Tiny Swords (Free Pack)/Units/Black Units/Archer/Archer_Idle.png" id="3_qyn4e"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_agl1s"]
+size = Vector2(1280, 352)
+
+[sub_resource type="Animation" id="Animation_2ff43"]
+length = 0.001
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath(".:frame")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [0]
+}
+
+[sub_resource type="Animation" id="Animation_uj7r0"]
+resource_name = "\\Idle"
+length = 0.6
+loop_mode = 1
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath(".:frame")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 0.099999994, 0.2, 0.3, 0.4, 0.5),
+"transitions": PackedFloat32Array(1, 1, 1, 1, 1, 1),
+"update": 1,
+"values": [0, 1, 2, 3, 4, 5]
+}
+
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_qyn4e"]
+_data = {
+&"RESET": SubResource("Animation_2ff43"),
+&"\\Idle": SubResource("Animation_uj7r0")
+}
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_l73fi"]
+size = Vector2(96.00003, 96.00003)
+
+[sub_resource type="CompressedTexture2D" id="CompressedTexture2D_2ff43"]
+load_path = "res://.godot/imported/Warrior_Idle.png-1557c949cc757c7429cd4228b4c1276f.ctex"
+
+[sub_resource type="Animation" id="Animation_skxne"]
+resource_name = "Idle"
+loop_mode = 1
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath(".:frame")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 0.099999994, 0.2, 0.3, 0.4, 0.5, 0.6),
+"transitions": PackedFloat32Array(1, 1, 1, 1, 1, 1, 1),
+"update": 1,
+"values": [0, 1, 2, 3, 4, 5, 6]
+}
+
+[sub_resource type="Animation" id="Animation_qyn4e"]
+length = 0.001
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath(".:frame")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [0]
+}
+
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_skxne"]
+_data = {
+&"Idle": SubResource("Animation_skxne"),
+&"RESET": SubResource("Animation_qyn4e")
+}
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_qjfpg"]
+size = Vector2(128, 128)
+
+[node name="2Multiplayer" type="Node2D" unique_id=1111055155]
+metadata/_edit_lock_ = true
+
+[node name="Background" type="Sprite2D" parent="." unique_id=2001833066]
+scale = Vector2(5.0000005, 5.6249995)
+texture = ExtResource("1_2ff43")
+centered = false
+hframes = 3
+
+[node name="CardDropArea" type="Area2D" parent="." unique_id=1992131127]
+collision_layer = 2
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="CardDropArea" unique_id=1025601810]
+position = Vector2(640, 176)
+shape = SubResource("RectangleShape2D_agl1s")
+debug_color = Color(0, 0.6, 0.69803923, 0.1254902)
+
+[node name="DomainUI" type="CanvasLayer" parent="." unique_id=982923746 groups=["ui_layer"]]
+
+[node name="Hand" type="HBoxContainer" parent="DomainUI" unique_id=65574848]
+anchors_preset = 7
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+offset_left = -304.0
+offset_top = -300.0
+offset_right = 304.0
+grow_horizontal = 2
+grow_vertical = 0
+alignment = 1
+script = ExtResource("2_qyn4e")
+
+[node name="CardUI" parent="DomainUI/Hand" unique_id=370479775 instance=ExtResource("2_uj7r0")]
+layout_mode = 2
+
+[node name="CardUI2" parent="DomainUI/Hand" unique_id=482488070 instance=ExtResource("2_uj7r0")]
+layout_mode = 2
+
+[node name="CardUI3" parent="DomainUI/Hand" unique_id=1497547346 instance=ExtResource("2_uj7r0")]
+layout_mode = 2
+
+[node name="P1" type="Node2D" parent="." unique_id=1717060416]
+metadata/_edit_lock_ = true
+
+[node name="Player" type="Node2D" parent="P1" unique_id=8937331]
+metadata/_edit_lock_ = true
+
+[node name="Character" type="Node2D" parent="P1/Player" unique_id=1612120220]
+position = Vector2(0, 720)
+
+[node name="Sprite2D" type="Sprite2D" parent="P1/Player/Character" unique_id=1497635325]
+position = Vector2(128, -272)
+scale = Vector2(0.99999994, 1)
+texture = ExtResource("3_qyn4e")
+centered = false
+hframes = 6
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="P1/Player/Character/Sprite2D" unique_id=1531633505]
+libraries/ = SubResource("AnimationLibrary_qyn4e")
+
+[node name="Area2D" type="Area2D" parent="P1/Player/Character/Sprite2D" unique_id=1021038462]
+position = Vector2(23.999985, 23.999985)
+scale = Vector2(0.125, 0.12499999)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="P1/Player/Character/Sprite2D/Area2D" unique_id=338217309]
+position = Vector2(576.00024, 575.99994)
+scale = Vector2(7.9999995, 7.999998)
+shape = SubResource("RectangleShape2D_l73fi")
+
+[node name="P2" type="Node2D" parent="." unique_id=1171637334]
+
+[node name="Character" type="Area2D" parent="P2" unique_id=2021536908]
+
+[node name="Sprite2D" type="Sprite2D" parent="P2/Character" unique_id=662356329]
+position = Vector2(832, 112)
+scale = Vector2(0.6666667, 0.6666667)
+texture = SubResource("CompressedTexture2D_2ff43")
+hframes = 8
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="P2/Character/Sprite2D" unique_id=401119948]
+libraries/ = SubResource("AnimationLibrary_skxne")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="P2/Character" unique_id=746266133]
+position = Vector2(832.00006, 112.00001)
+shape = SubResource("RectangleShape2D_qjfpg")
