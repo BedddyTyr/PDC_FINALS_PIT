@@ -1,5 +1,4 @@
 using Godot;
-using System.Collections.Generic;
 
 public partial class NetworkManager : Node
 {
@@ -22,6 +21,10 @@ public partial class NetworkManager : Node
 		// Add LobbyDiscovery as child
 		var lobbyDiscovery = new LobbyDiscovery();
 		AddChild(lobbyDiscovery);
+
+		// Add LobbyManager as child so it persists
+		var lobbyManager = new LobbyManager();
+		AddChild(lobbyManager);
 
 		Multiplayer.PeerConnected += (id) =>
 			GD.Print($"Player {id} connected!");
@@ -66,7 +69,6 @@ public partial class NetworkManager : Node
 
 		Multiplayer.MultiplayerPeer = peer;
 
-		// Start broadcasting lobby
 		string hostName = OS.GetEnvironment("USERNAME");
 		LobbyDiscovery.Instance.StartBroadcasting(
 			hostName, MaxPlayers);
@@ -86,8 +88,6 @@ public partial class NetworkManager : Node
 		}
 
 		Multiplayer.MultiplayerPeer = peer;
-
-		// Stop listening after joining
 		LobbyDiscovery.Instance.StopAll();
 
 		GD.Print($"Joining game at {ip}!");

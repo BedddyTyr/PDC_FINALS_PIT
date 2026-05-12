@@ -1,27 +1,48 @@
 [gd_scene format=3 uid="uid://hx7pjkdgee50"]
 
-[ext_resource type="Script" uid="uid://8vb41d8l0muw" path="res://LobbyMenu.cs" id="1_fbe1o"]
+[ext_resource type="Script" uid="uid://8vb41d8l0muw" path="res://Scripts/LobbyMenu.cs" id="1_fbe1o"]
 
 [node name="LobbyMenu" type="Node2D" unique_id=1684476527]
 script = ExtResource("1_fbe1o")
 
 [node name="CanvasLayer" type="CanvasLayer" parent="." unique_id=1116459107]
 
-[node name="Label" type="Label" parent="CanvasLayer" unique_id=670399057]
-offset_right = 40.0
+[node name="TitleLabel" type="Label" parent="CanvasLayer" unique_id=670399057]
+anchors_preset = 5
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -20.0
+offset_right = 20.0
 offset_bottom = 23.0
+grow_horizontal = 2
+
+[node name="RefreshButton" type="Button" parent="CanvasLayer" unique_id=501086661]
+offset_left = 300.0
+offset_top = 520.0
+offset_right = 308.0
+offset_bottom = 528.0
+
+[node name="BackButton" type="Button" parent="CanvasLayer" unique_id=577808684]
+offset_left = 500.0
+offset_top = 520.0
+offset_right = 508.0
+offset_bottom = 528.0
 
 [node name="ScrollContainer" type="ScrollContainer" parent="CanvasLayer" unique_id=12288957]
-offset_right = 40.0
-offset_bottom = 40.0
+offset_left = 200.0
+offset_top = 100.0
+offset_right = 900.0
+offset_bottom = 500.0
 
 [node name="LobbyList" type="VBoxContainer" parent="CanvasLayer/ScrollContainer" unique_id=1095799628]
 layout_mode = 2
 
-[node name="RefreshButton" type="Button" parent="CanvasLayer" unique_id=501086661]
+[node name="ManualJoinButton" type="Button" parent="CanvasLayer" unique_id=5377236]
 offset_right = 8.0
 offset_bottom = 8.0
 
-[node name="BackButton" type="Button" parent="CanvasLayer" unique_id=577808684]
-offset_right = 8.0
-offset_bottom = 8.0
+[node name="ManualIPInput" type="LineEdit" parent="CanvasLayer" unique_id=1293083902]
+offset_left = 200.0
+offset_top = 100.0
+offset_right = 268.5
+offset_bottom = 131.0

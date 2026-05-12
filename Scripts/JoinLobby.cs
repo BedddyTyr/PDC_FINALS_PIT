@@ -7,7 +7,6 @@ public partial class JoinLobby : Node2D
 	private Label _statusLabel;
 	private Button _readyButton;
 	private Button _disconnectButton;
-	private LobbyManager _lobbyManager;
 	private bool _isReady = false;
 
 	public override void _Ready()
@@ -23,20 +22,19 @@ public partial class JoinLobby : Node2D
 		_disconnectButton = GetNode<Button>(
 			"CanvasLayer/VBoxContainer/DisconnectButton");
 
-		_lobbyManager = new LobbyManager();
-		AddChild(_lobbyManager);
-
 		_titleLabel.Text = "LOBBY";
 		_readyButton.Text = "Ready Up!";
 		_disconnectButton.Text = "Disconnect";
-		_statusLabel.Text = 
+		_statusLabel.Text =
 			"Click Ready when you are prepared!";
 
 		_readyButton.Pressed += OnReadyPressed;
 		_disconnectButton.Pressed += OnDisconnectPressed;
 
 		Multiplayer.PeerConnected += (id) => UpdatePlayers();
-		Multiplayer.PeerDisconnected += (id) => UpdatePlayers();
+		Multiplayer.PeerDisconnected += (id) =>
+			OnPeerDisconnected(id);
+		Multiplayer.ServerDisconnected += OnServerDisconnected;
 
 		UpdatePlayers();
 	}
@@ -54,17 +52,47 @@ public partial class JoinLobby : Node2D
 		{
 			_isReady = true;
 			_readyButton.Text = "✓ Ready!";
-			_statusLabel.Text = 
+			_statusLabel.Text =
 				"Waiting for other players...";
-			_lobbyManager.Rpc(
+
+			// Send ready to ALL peers using shared LobbyManager
+			LobbyManager.Instance.Rpc(
 				nameof(LobbyManager.SetPlayerReady),
 				Multiplayer.GetUniqueId());
 		}
 	}
 
+	private void OnPeerDisconnected(long id)
+	{
+		UpdatePlayers();
+		if (id == 1) HostLeft();
+	}
+
+	private void OnServerDisconnected()
+	{
+		HostLeft();
+	}
+
+	private void HostLeft()
+	{
+		GD.Print("Host left!");
+		_statusLabel.Text = "Host left the lobby!";
+		_titleLabel.Text = "HOST LEFT";
+		_readyButton.Disabled = true;
+
+		var timer = GetTree().CreateTimer(2.0f);
+		timer.Timeout += () =>
+		{
+			NetworkManager.Instance.DisconnectGame();
+			GetTree().ChangeSceneToFile(
+				"res://Scenes/MainMenu.tscn");
+		};
+	}
+
 	private void OnDisconnectPressed()
 	{
 		NetworkManager.Instance.DisconnectGame();
-		GetTree().ChangeSceneToFile("res://Scenes/MainMenu.tscn");
+		GetTree().ChangeSceneToFile(
+			"res://Scenes/MainMenu.tscn");
 	}
 }

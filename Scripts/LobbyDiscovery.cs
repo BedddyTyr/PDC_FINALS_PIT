@@ -1,17 +1,21 @@
 using Godot;
 using System.Collections.Generic;
+using System.IO;
 
 public partial class LobbyDiscovery : Node
 {
 	public static LobbyDiscovery Instance { get; private set; }
 
 	private const int BROADCAST_PORT = 7778;
-	private const float BROADCAST_INTERVAL = 2.0f;
+	private const float BROADCAST_INTERVAL = 1.0f;
 
 	private PacketPeerUdp _broadcaster;
 	private PacketPeerUdp _listener;
 	private float _timer = 0f;
 	private bool _isHosting = false;
+	private string _hostName = "";
+	private int _maxPlayers = 2;
+	private string _subnetBroadcast = "192.168.18.255";
 
 	public class LobbyInfo
 	{
@@ -28,12 +32,35 @@ public partial class LobbyDiscovery : Node
 	public override void _Ready()
 	{
 		Instance = this;
+
+		// Auto detect subnet broadcast address
+		string localIP = "";
+		foreach (var ip in IP.GetLocalAddresses())
+		{
+			if (ip.Contains(".") && !ip.StartsWith("127"))
+			{
+				localIP = ip;
+				break;
+			}
+		}
+
+		if (localIP != "")
+		{
+			// Get subnet broadcast e.g 192.168.18.255
+			string[] parts = localIP.Split(".");
+			if (parts.Length == 4)
+				_subnetBroadcast = 
+					$"{parts[0]}.{parts[1]}.{parts[2]}.255";
+		}
+
+		GD.Print($"Subnet broadcast: {_subnetBroadcast}");
 	}
 
-	// Called by HOST to start broadcasting
 	public void StartBroadcasting(string hostName, int maxPlayers)
 	{
 		_isHosting = true;
+		_hostName = hostName;
+		_maxPlayers = maxPlayers;
 
 		_broadcaster = new PacketPeerUdp();
 		_broadcaster.SetBroadcastEnabled(true);
@@ -42,7 +69,6 @@ public partial class LobbyDiscovery : Node
 		GD.Print($"Broadcasting lobby: {hostName}");
 	}
 
-	// Called by JOINER to start listening
 	public void StartListening()
 	{
 		_isHosting = false;
@@ -65,7 +91,6 @@ public partial class LobbyDiscovery : Node
 
 	public override void _Process(double delta)
 	{
-		// HOST: broadcast every 2 seconds
 		if (_isHosting && _broadcaster != null)
 		{
 			_timer += (float)delta;
@@ -76,7 +101,6 @@ public partial class LobbyDiscovery : Node
 			}
 		}
 
-		// JOINER: listen for broadcasts
 		if (!_isHosting && _listener != null)
 		{
 			ListenForLobbies();
@@ -85,16 +109,24 @@ public partial class LobbyDiscovery : Node
 
 	private void BroadcastLobby()
 	{
-		string hostName = OS.GetEnvironment("USERNAME");
-		int currentPlayers = Multiplayer.GetPeers().Length + 1;
+		int currentPlayers = 
+			Multiplayer.GetPeers().Length + 1;
 		string ip = NetworkManager.Instance.GetLocalIP();
 
-		// Format: LOBBY|HostName|IP|CurrentPlayers|MaxPlayers
-		string message = 
-			$"LOBBY|{hostName}|{ip}|{currentPlayers}|{NetworkManager.MaxPlayers}";
+		string message =
+			$"LOBBY|{_hostName}|{ip}|{currentPlayers}|{_maxPlayers}";
 
-		byte[] data = System.Text.Encoding.UTF8.GetBytes(message);
-		_broadcaster.SetDestAddress("255.255.255.255", BROADCAST_PORT);
+		byte[] data =
+			System.Text.Encoding.UTF8.GetBytes(message);
+
+		// Send to subnet broadcast
+		_broadcaster.SetDestAddress(
+			_subnetBroadcast, BROADCAST_PORT);
+		_broadcaster.PutPacket(data);
+
+		// Also send to localhost for same computer testing
+		_broadcaster.SetDestAddress(
+			"127.0.0.1", BROADCAST_PORT);
 		_broadcaster.PutPacket(data);
 	}
 
@@ -103,7 +135,7 @@ public partial class LobbyDiscovery : Node
 		while (_listener.GetAvailablePacketCount() > 0)
 		{
 			byte[] data = _listener.GetPacket();
-			string message = 
+			string message =
 				System.Text.Encoding.UTF8.GetString(data);
 
 			if (message.StartsWith("LOBBY|"))
@@ -112,20 +144,18 @@ public partial class LobbyDiscovery : Node
 				if (parts.Length == 5)
 				{
 					string ip = parts[2];
-
-					// Check if lobby already in list
 					var existing = DiscoveredLobbies
 						.Find(l => l.IP == ip);
 
 					if (existing != null)
 					{
-						// Update existing lobby
-						existing.CurrentPlayers = int.Parse(parts[3]);
-						existing.MaxPlayers = int.Parse(parts[4]);
+						existing.CurrentPlayers =
+							int.Parse(parts[3]);
+						existing.MaxPlayers =
+							int.Parse(parts[4]);
 					}
 					else
 					{
-						// Add new lobby
 						DiscoveredLobbies.Add(new LobbyInfo
 						{
 							HostName = parts[1],
@@ -133,7 +163,6 @@ public partial class LobbyDiscovery : Node
 							CurrentPlayers = int.Parse(parts[3]),
 							MaxPlayers = int.Parse(parts[4])
 						});
-
 						GD.Print($"Found lobby: {parts[1]} at {ip}");
 					}
 				}

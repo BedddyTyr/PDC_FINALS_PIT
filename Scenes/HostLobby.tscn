@@ -1,6 +1,6 @@
 [gd_scene format=3 uid="uid://cqq20to8vr6k1"]
 
-[ext_resource type="Script" uid="uid://b7xmc5vq6pt5u" path="res://HostLobby.cs" id="1_faymq"]
+[ext_resource type="Script" uid="uid://b7xmc5vq6pt5u" path="res://Scripts/HostLobby.cs" id="1_faymq"]
 
 [node name="HostLobby" type="Node2D" unique_id=501477342]
 script = ExtResource("1_faymq")
@@ -24,4 +24,10 @@ layout_mode = 2
 layout_mode = 2
 
 [node name="DisconnectButton" type="Button" parent="CanvasLayer/VBoxContainer" unique_id=147844100]
+layout_mode = 2
+
+[node name="ReadyCountLabel" type="Label" parent="CanvasLayer/VBoxContainer" unique_id=1000217043]
+layout_mode = 2
+
+[node name="StartButton" type="Button" parent="CanvasLayer/VBoxContainer" unique_id=1729518169]
 layout_mode = 2

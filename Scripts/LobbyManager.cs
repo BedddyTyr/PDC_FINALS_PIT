@@ -3,12 +3,23 @@ using System.Collections.Generic;
 
 public partial class LobbyManager : Node
 {
+	public static LobbyManager Instance { get; private set; }
+
 	private List<int> _connectedPlayers = new List<int>();
-	private Dictionary<int, bool> _readyPlayers = 
+	private Dictionary<int, bool> _readyPlayers =
 		new Dictionary<int, bool>();
+
+	[Signal]
+	public delegate void AllPlayersReadyEventHandler();
+
+	[Signal]
+	public delegate void ReadyCountChangedEventHandler(
+		int readyCount, int totalCount);
 
 	public override void _Ready()
 	{
+		Instance = this;
+
 		Multiplayer.PeerConnected += OnPeerConnected;
 		Multiplayer.PeerDisconnected += OnPeerDisconnected;
 
@@ -30,31 +41,60 @@ public partial class LobbyManager : Node
 		GD.Print($"Player left! ({_connectedPlayers.Count}/{NetworkManager.MaxPlayers})");
 	}
 
-	[Rpc(MultiplayerApi.RpcMode.AnyPeer, CallLocal = true)]
+	[Rpc(MultiplayerApi.RpcMode.AnyPeer, CallLocal = true,
+		TransferMode = MultiplayerPeer.TransferModeEnum.Reliable)]
 	public void SetPlayerReady(int playerId)
 	{
-		_readyPlayers[playerId] = true;
 		GD.Print($"Player {playerId} is ready!");
+
+		if (!_readyPlayers.ContainsKey(playerId))
+			_readyPlayers[playerId] = false;
+
+		_readyPlayers[playerId] = true;
+
+		int readyCount = GetReadyCount();
+		int totalCount = _connectedPlayers.Count;
+
+		EmitSignal(SignalName.ReadyCountChanged,
+			readyCount, totalCount);
+
 		CheckAllReady();
 	}
 
-	private void CheckAllReady()
+	public int GetReadyCount()
 	{
-		if (_connectedPlayers.Count < NetworkManager.MaxPlayers)
-			return;
-
+		int count = 0;
 		foreach (var ready in _readyPlayers.Values)
-		{
-			if (!ready) return;
-		}
-
-		GD.Print("All players ready! Starting game...");
-		Rpc(nameof(StartGame));
+			if (ready) count++;
+		return count;
 	}
 
-	[Rpc(MultiplayerApi.RpcMode.Authority, CallLocal = true)]
-	private void StartGame()
+	public int GetTotalPlayers()
 	{
-		GetTree().ChangeSceneToFile("res://Scenes/GameMatch.tscn");
+		return _connectedPlayers.Count;
+	}
+
+private void CheckAllReady()
+{
+	if (_connectedPlayers.Count < NetworkManager.MaxPlayers)
+		return;
+
+	// Only check non-host players (ID 1 is always host)
+	foreach (var kvp in _readyPlayers)
+	{
+		if (kvp.Key == 1) continue; // Skip host
+		if (!kvp.Value) return;
+	}
+
+		GD.Print("All players ready!");
+		EmitSignal(SignalName.AllPlayersReady);
+	}
+
+	[Rpc(MultiplayerApi.RpcMode.Authority, CallLocal = true,
+		TransferMode = MultiplayerPeer.TransferModeEnum.Reliable)]
+	public void StartGame()
+	{
+		GetTree().ChangeSceneToFile(
+			"res://Scenes/GameMatch.tscn");
 	}
 }

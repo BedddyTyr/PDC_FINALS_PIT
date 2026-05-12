@@ -1,6 +1,6 @@
 [gd_scene format=3 uid="uid://dqt75i7dv3auk"]
 
-[ext_resource type="Script" uid="uid://wi43dm1cu4rr" path="res://JoinLobby.cs" id="1_ynbvv"]
+[ext_resource type="Script" uid="uid://wi43dm1cu4rr" path="res://Scripts/JoinLobby.cs" id="1_ynbvv"]
 
 [node name="JoinLobby" type="Node2D" unique_id=1571673553]
 script = ExtResource("1_ynbvv")
