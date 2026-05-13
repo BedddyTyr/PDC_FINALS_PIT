@@ -1,34 +1,83 @@
 extends CardState
 
+
 func enter() -> void:
-	var ui_layer := get_tree().get_first_node_in_group("ui_layer")
-	if ui_layer:
-		card_ui.reparent(ui_layer)
 
 	card_ui.color.color = Color.NAVY_BLUE
 	card_ui.state_label.text = "DRAGGING"
 
-	# reset decision each drag
 	card_ui.should_return_to_hand = true
 
+	card_ui.z_index = 100
 
-func on_input(event: InputEvent) -> void:
-	var mouse_motion := event is InputEventMouseMotion
-	var cancel := event.is_action_pressed("right_mouse")
-	var release := event.is_action_released("left_mouse")
+	# SAVE POSITION
+	card_ui.original_global_position = (
+		card_ui.global_position
+	)
 
-	if mouse_motion:
-		card_ui.global_position = card_ui.get_global_mouse_position() - card_ui.pivot_offset
+	var drag_layer = (
+		card_ui.get_tree()
+		.get_first_node_in_group("drag_layer")
+	)
 
-	if cancel:
-		card_ui.should_return_to_hand = true
-		transition_requested.emit(self, CardState.State.BASE)
+	if drag_layer:
 
-	elif release:
-		# 🔥 Decide if card should stay or return
-		var valid_drop := card_ui.drop_point_detector.get_overlapping_areas().size() > 0
+		var current_global_position = (
+			card_ui.global_position
+		)
 
-		card_ui.should_return_to_hand = not valid_drop
+		var parent = card_ui.get_parent()
 
-		get_viewport().set_input_as_handled()
-		transition_requested.emit(self, CardState.State.RELEASED)
+		if parent:
+			parent.remove_child(card_ui)
+
+		drag_layer.add_child(card_ui)
+
+		card_ui.mouse_filter = (
+			Control.MOUSE_FILTER_STOP
+		)
+
+		card_ui.global_position = (
+			current_global_position
+		)
+
+
+func on_gui_input(event: InputEvent) -> void:
+
+	# DRAG
+	if event is InputEventMouseMotion:
+
+		card_ui.global_position = (
+			card_ui.get_global_mouse_position()
+			- card_ui.pivot_offset
+		)
+
+	# RELEASE
+	if event is InputEventMouseButton:
+
+		if event.button_index == MOUSE_BUTTON_LEFT:
+
+			if not event.pressed:
+
+				var overlapping_areas = (
+					card_ui.drop_point_detector
+					.get_overlapping_areas()
+				)
+
+				var valid_drop: bool = false
+
+				for area in overlapping_areas:
+
+					if area.name == "CardDropArea":
+
+						valid_drop = true
+						break
+
+				card_ui.should_return_to_hand = (
+					not valid_drop
+				)
+
+				transition_requested.emit(
+					self,
+					CardState.State.RELEASED
+				)

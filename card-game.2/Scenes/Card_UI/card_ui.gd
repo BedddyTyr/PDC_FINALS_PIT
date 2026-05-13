@@ -1,44 +1,44 @@
-class_name CardUI
 extends Control
+class_name CardUI
 
-@export var card: Card
+signal reparent_requested(which_card_ui)
 
 @onready var color: ColorRect = $Color
-@onready var state_label: Label = $State
+@onready var state_label: Label = $StateLabel
+@onready var state_machine = $CardStateMachine
 @onready var drop_point_detector: Area2D = $DropPointDetector
-@onready var card_state_machine: CardStateMachine = $CardStateMachine
 
-# 🔥 targets currently hovered / in range
-var targets: Array = []
-
-# controls whether card returns to hand
-var should_return_to_hand := true
+var original_global_position: Vector2
+var should_return_to_hand: bool = true
 
 
 func _ready() -> void:
-	card_state_machine.init(self)
 
+	mouse_filter = Control.MOUSE_FILTER_STOP
 
-func _input(event: InputEvent) -> void:
-	card_state_machine.on_input(event)
+	# Wait one frame so hand container finishes layout
+	await get_tree().process_frame
+
+	original_global_position = global_position
+
+	state_machine.init(self)
 
 
 func _gui_input(event: InputEvent) -> void:
-	card_state_machine.on_gui_input(event)
+	state_machine.on_gui_input(event)
 
 
-func _on_mouse_entered() -> void:
-	card_state_machine.on_mouse_entered()
+func _unhandled_input(event: InputEvent) -> void:
+	state_machine.on_input(event)
 
 
-func _on_mouse_exited() -> void:
-	card_state_machine.on_mouse_exited()
+func return_to_original_position() -> void:
 
+	var tween = create_tween()
 
-func _on_drop_point_detector_area_entered(area: Area2D) -> void:
-	if not targets.has(area):
-		targets.append(area)
-
-
-func _on_drop_point_detector_area_exited(area: Area2D) -> void:
-	targets.erase(area)
+	tween.tween_property(
+		self,
+		"global_position",
+		original_global_position,
+		0.2
+	)

@@ -8,7 +8,4 @@ script = ExtResource("2_7d51f")
 id = "Defence_BUFF_DEF"
 card_name = "Defence"
 description = "Adds 20 defence"
-type = "Defence"
-target = 0
-defense = 20
 metadata/_custom_type_script = "uid://d2jlaigh8wuy4"

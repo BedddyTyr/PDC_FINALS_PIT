@@ -102,7 +102,7 @@ centered = false
 hframes = 3
 
 [node name="CardDropArea" type="Area2D" parent="." unique_id=1992131127]
-collision_layer = 2
+collision_mask = 2
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="CardDropArea" unique_id=1025601810]
 position = Vector2(640, 176)
@@ -111,7 +111,7 @@ debug_color = Color(0, 0.6, 0.69803923, 0.1254902)
 
 [node name="DomainUI" type="CanvasLayer" parent="." unique_id=982923746 groups=["ui_layer"]]
 
-[node name="Hand" type="HBoxContainer" parent="DomainUI" unique_id=65574848]
+[node name="Hand" type="HBoxContainer" parent="DomainUI" unique_id=65574848 groups=["Hand"]]
 anchors_preset = 7
 anchor_left = 0.5
 anchor_top = 1.0
@@ -133,6 +133,15 @@ layout_mode = 2
 
 [node name="CardUI3" parent="DomainUI/Hand" unique_id=1497547346 instance=ExtResource("2_uj7r0")]
 layout_mode = 2
+
+[node name="DragLayer" type="Control" parent="DomainUI" unique_id=1480757996 groups=["Drag_layer"]]
+layout_mode = 3
+anchors_preset = 0
+offset_left = 320.0
+offset_top = 408.0
+offset_right = 960.0
+offset_bottom = 720.0
+mouse_filter = 2
 
 [node name="P1" type="Node2D" parent="." unique_id=1717060416]
 metadata/_edit_lock_ = true

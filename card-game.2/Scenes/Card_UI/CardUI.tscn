@@ -35,7 +35,7 @@ grow_vertical = 2
 mouse_filter = 2
 color = Color(0.072365396, 0.21338567, 0.2736842, 1)
 
-[node name="State" type="Label" parent="." unique_id=1903896179]
+[node name="StateLabel" type="Label" parent="." unique_id=1903896179]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -51,14 +51,15 @@ horizontal_alignment = 1
 vertical_alignment = 1
 
 [node name="DropPointDetector" type="Area2D" parent="." unique_id=1669143428]
-collision_mask = 2
+collision_layer = 2
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="DropPointDetector" unique_id=2032871115]
 position = Vector2(88, 128)
 shape = SubResource("RectangleShape2D_huidv")
 
-[node name="CardStateMachine" type="Node" parent="." unique_id=1121228986]
+[node name="CardStateMachine" type="Node" parent="." unique_id=1121228986 node_paths=PackedStringArray("initial_state")]
 script = ExtResource("3_pfro6")
+initial_state = NodePath("CardBaseState")
 
 [node name="CardBaseState" type="Node" parent="CardStateMachine" unique_id=361410020]
 script = ExtResource("4_f8owo")
@@ -73,7 +74,7 @@ state = 2
 
 [node name="CardReleasedState" type="Node" parent="CardStateMachine" unique_id=182191807]
 script = ExtResource("7_w6hyy")
-state = 4
+state = 3
 
 [connection signal="gui_input" from="." to="." method="_on_gui_input"]
 [connection signal="mouse_entered" from="." to="." method="_on_mouse_entered"]

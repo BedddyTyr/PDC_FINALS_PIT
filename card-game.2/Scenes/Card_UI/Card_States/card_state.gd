@@ -1,9 +1,14 @@
-class_name CardState
 extends Node
+class_name CardState
 
-enum State { BASE, CLICKED, DRAGGING, AIMING, RELEASED }
+signal transition_requested(from, to)
 
-signal transition_requested(from: CardState, to: State)
+enum State {
+	BASE,
+	CLICKED,
+	DRAGGING,
+	RELEASED
+}
 
 @export var state: State
 
