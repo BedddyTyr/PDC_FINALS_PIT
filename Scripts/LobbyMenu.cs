@@ -3,42 +3,41 @@ using Godot;
 public partial class LobbyMenu : Node2D
 {
 	private VBoxContainer _lobbyList;
-	private Button _refreshButton;
 	private Button _backButton;
 	private Label _titleLabel;
 	private LineEdit _manualIPInput;
 	private Button _manualJoinButton;
+	private Label _errorLabel;
 	private float _refreshTimer = 0f;
-	private const float REFRESH_INTERVAL = 1.0f;
+	private const float REFRESH_INTERVAL = 0.5f;
 
 	public override void _Ready()
 	{
 		_titleLabel = GetNode<Label>(
-			"CanvasLayer/TitleLabel");
+			"CanvasLayer/Control/TitleLabel");
 		_lobbyList = GetNode<VBoxContainer>(
-			"CanvasLayer/ScrollContainer/LobbyList");
-		_refreshButton = GetNode<Button>(
-			"CanvasLayer/RefreshButton");
+			"CanvasLayer/Control/LobbyList");
 		_backButton = GetNode<Button>(
-			"CanvasLayer/BackButton");
+			"CanvasLayer/Control/BackButton");
 		_manualIPInput = GetNode<LineEdit>(
-			"CanvasLayer/ManualIPInput");
+			"CanvasLayer/Control/ManualIPInput");
 		_manualJoinButton = GetNode<Button>(
-			"CanvasLayer/ManualJoinButton");
+			"CanvasLayer/Control/ManualJoinButton");
+		_errorLabel = GetNode<Label>(
+			"CanvasLayer/Control/ErrorLabel");
 
-		_titleLabel.Text = "LOBBY MENU";
-		_refreshButton.Text = "Refresh";
-		_backButton.Text = "Back";
-		_manualIPInput.PlaceholderText = 
-			"Enter host IP manually (e.g 192.168.18.36)";
+		_titleLabel.Text = "JOIN GAME";
+		_manualIPInput.PlaceholderText =
+			"Enter host IP (e.g 192.168.1.36)";
 		_manualJoinButton.Text = "Connect";
+		_backButton.Text = "Back";
+		_errorLabel.Text = 
+			"Searching for lobbies...";
 
-		_refreshButton.Pressed += OnRefreshPressed;
-		_backButton.Pressed += OnBackPressed;
 		_manualJoinButton.Pressed += OnManualJoinPressed;
+		_backButton.Pressed += OnBackPressed;
 
 		LobbyDiscovery.Instance.StartListening();
-		RefreshLobbyList();
 	}
 
 	public override void _Process(double delta)
@@ -47,28 +46,32 @@ public partial class LobbyMenu : Node2D
 		if (_refreshTimer >= REFRESH_INTERVAL)
 		{
 			_refreshTimer = 0f;
-			LobbyDiscovery.Instance.StartListening();
-			RefreshLobbyList();
+			CheckAutoDiscovery();
 		}
 	}
 
-	private void RefreshLobbyList()
+	private void CheckAutoDiscovery()
 	{
-		foreach (Node child in _lobbyList.GetChildren())
-			child.QueueFree();
-
-		var lobbies = LobbyDiscovery.Instance.DiscoveredLobbies;
+		var lobbies =
+			LobbyDiscovery.Instance.DiscoveredLobbies;
 
 		if (lobbies.Count == 0)
 		{
-			var noLobbies = new Label();
-			noLobbies.Text =
-				"No lobbies found...\n" +
-				"Try refreshing or use manual IP below!";
-			_lobbyList.AddChild(noLobbies);
+			_errorLabel.Text =
+				"Searching for lobbies...\n" +
+				"Or enter IP manually below";
+
+			// Clear lobby list
+			foreach (Node child in _lobbyList.GetChildren())
+				child.QueueFree();
 			return;
 		}
 
+		// Clear old entries
+		foreach (Node child in _lobbyList.GetChildren())
+			child.QueueFree();
+
+		// Show found lobbies
 		foreach (var lobby in lobbies)
 		{
 			var panel = new PanelContainer();
@@ -76,7 +79,7 @@ public partial class LobbyMenu : Node2D
 			var vbox = new VBoxContainer();
 
 			var nameLabel = new Label();
-			nameLabel.Text =
+			nameLabel.Text = 
 				$"  {lobby.HostName}'s Lobby";
 
 			var countLabel = new Label();
@@ -89,13 +92,14 @@ public partial class LobbyMenu : Node2D
 				"  Full" : "  Waiting...";
 
 			var joinButton = new Button();
-			joinButton.Text = "Join Lobby";
+			joinButton.Text = "Join";
 			joinButton.Disabled = lobby.IsFull;
 			joinButton.CustomMinimumSize =
-				new Vector2(120, 50);
+				new Vector2(100, 50);
 
 			string lobbyIP = lobby.IP;
-			joinButton.Pressed += () => OnJoinLobby(lobbyIP);
+			joinButton.Pressed += () => 
+				OnJoinLobby(lobbyIP);
 
 			vbox.AddChild(nameLabel);
 			vbox.AddChild(countLabel);
@@ -104,8 +108,12 @@ public partial class LobbyMenu : Node2D
 			hbox.AddChild(joinButton);
 			panel.AddChild(hbox);
 			panel.CustomMinimumSize =
-				new Vector2(600, 80);
+				new Vector2(500, 80);
 			_lobbyList.AddChild(panel);
+
+			// Update error label
+			_errorLabel.Text = 
+				"Lobby found! Click Join to connect.";
 		}
 	}
 
@@ -123,21 +131,38 @@ public partial class LobbyMenu : Node2D
 
 		if (ip == "")
 		{
-			GD.Print("Please enter an IP address!");
+			_errorLabel.Text =
+				"Please enter an IP address!";
 			return;
 		}
 
-		GD.Print($"Manually joining at {ip}");
-		NetworkManager.Instance.JoinGame(ip);
-		GetTree().ChangeSceneToFile(
-			"res://Scenes/JoinLobby.tscn");
-	}
+		string[] parts = ip.Split(".");
+		if (parts.Length != 4)
+		{
+			_errorLabel.Text =
+				"Invalid IP! Example: 192.168.1.36";
+			return;
+		}
 
-	private void OnRefreshPressed()
-	{
-		LobbyDiscovery.Instance.DiscoveredLobbies.Clear();
-		LobbyDiscovery.Instance.StartListening();
-		RefreshLobbyList();
+		_errorLabel.Text = "Connecting...";
+		NetworkManager.Instance.JoinGame(ip);
+
+		var timer = GetTree().CreateTimer(3.0f);
+		timer.Timeout += () =>
+		{
+			if (Multiplayer.GetPeers().Length == 0)
+			{
+				_errorLabel.Text =
+					"Can't find lobby!\n" +
+					"Check IP and try again.";
+				NetworkManager.Instance.DisconnectGame();
+			}
+			else
+			{
+				GetTree().ChangeSceneToFile(
+					"res://Scenes/JoinLobby.tscn");
+			}
+		};
 	}
 
 	private void OnBackPressed()

@@ -7,42 +7,52 @@ script = ExtResource("1_fbe1o")
 
 [node name="CanvasLayer" type="CanvasLayer" parent="." unique_id=1116459107]
 
-[node name="TitleLabel" type="Label" parent="CanvasLayer" unique_id=670399057]
-anchors_preset = 5
-anchor_left = 0.5
-anchor_right = 0.5
-offset_left = -20.0
-offset_right = 20.0
-offset_bottom = 23.0
+[node name="Control" type="Control" parent="CanvasLayer" unique_id=1871491907]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
 grow_horizontal = 2
+grow_vertical = 2
 
-[node name="RefreshButton" type="Button" parent="CanvasLayer" unique_id=501086661]
-offset_left = 300.0
-offset_top = 520.0
-offset_right = 308.0
-offset_bottom = 528.0
+[node name="TitleLabel" type="Label" parent="CanvasLayer/Control" unique_id=1131637985]
+layout_mode = 0
+offset_left = 400.0
+offset_top = 50.0
+offset_right = 440.0
+offset_bottom = 73.0
 
-[node name="BackButton" type="Button" parent="CanvasLayer" unique_id=577808684]
-offset_left = 500.0
-offset_top = 520.0
-offset_right = 508.0
-offset_bottom = 528.0
-
-[node name="ScrollContainer" type="ScrollContainer" parent="CanvasLayer" unique_id=12288957]
+[node name="LobbyList" type="VBoxContainer" parent="CanvasLayer/Control" unique_id=1583457742]
+layout_mode = 0
 offset_left = 200.0
-offset_top = 100.0
+offset_top = 120.0
 offset_right = 900.0
-offset_bottom = 500.0
+offset_bottom = 320.0
 
-[node name="LobbyList" type="VBoxContainer" parent="CanvasLayer/ScrollContainer" unique_id=1095799628]
-layout_mode = 2
-
-[node name="ManualJoinButton" type="Button" parent="CanvasLayer" unique_id=5377236]
-offset_right = 8.0
-offset_bottom = 8.0
-
-[node name="ManualIPInput" type="LineEdit" parent="CanvasLayer" unique_id=1293083902]
+[node name="ManualIPInput" type="LineEdit" parent="CanvasLayer/Control" unique_id=1883706523]
+layout_mode = 0
 offset_left = 200.0
-offset_top = 100.0
-offset_right = 268.5
-offset_bottom = 131.0
+offset_top = 350.0
+offset_right = 700.0
+offset_bottom = 390.0
+
+[node name="ManualJoinButton" type="Button" parent="CanvasLayer/Control" unique_id=1856386686]
+layout_mode = 0
+offset_left = 200.0
+offset_top = 410.0
+offset_right = 400.0
+offset_bottom = 450.0
+
+[node name="ErrorLabel" type="Label" parent="CanvasLayer/Control" unique_id=1757106093]
+layout_mode = 0
+offset_left = 200.0
+offset_top = 460.0
+offset_right = 240.0
+offset_bottom = 483.0
+
+[node name="BackButton" type="Button" parent="CanvasLayer/Control" unique_id=1794870056]
+layout_mode = 0
+offset_left = 200.0
+offset_top = 520.0
+offset_right = 400.0
+offset_bottom = 560.0

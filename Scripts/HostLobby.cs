@@ -40,12 +40,12 @@ public partial class HostLobby : Node2D
 		_disconnectButton.Pressed += OnDisconnectPressed;
 
 		Multiplayer.PeerConnected += (id) => UpdateUI();
-		Multiplayer.PeerDisconnected += (id) => 
+		Multiplayer.PeerDisconnected += (id) =>
 			OnPlayerDisconnected(id);
 
-		LobbyManager.Instance.AllPlayersReady += 
+		LobbyManager.Instance.AllPlayersReady +=
 			OnAllPlayersReady;
-		LobbyManager.Instance.ReadyCountChanged += 
+		LobbyManager.Instance.ReadyCountChanged +=
 			OnReadyCountChanged;
 
 		UpdateUI();
@@ -59,6 +59,7 @@ public partial class HostLobby : Node2D
 
 	private void UpdateUI()
 	{
+		// Only count unique peers + host (1)
 		int current = Multiplayer.GetPeers().Length + 1;
 		_playersLabel.Text =
 			$"Players: {current}/{NetworkManager.MaxPlayers}";
@@ -70,12 +71,9 @@ public partial class HostLobby : Node2D
 	private void OnPlayerDisconnected(long id)
 	{
 		UpdateUI();
-
-		// Disable start button when someone leaves
 		_startButton.Disabled = true;
 		_readyCountLabel.Text =
 			"A player left! Waiting for players...";
-
 		GD.Print($"Player {id} left! Start button disabled.");
 	}
 
@@ -86,12 +84,33 @@ public partial class HostLobby : Node2D
 		_startButton.Disabled = false;
 	}
 
-	private void OnStartPressed()
+private void OnStartPressed()
+{
+	// Double check all players still connected
+	int current = Multiplayer.GetPeers().Length + 1;
+
+	if (current < NetworkManager.MaxPlayers)
 	{
-		GD.Print("Host started the game!");
-		LobbyManager.Instance.Rpc(
-			nameof(LobbyManager.StartGame));
+		_readyCountLabel.Text =
+			"A player disconnected! Cannot start.";
+		_startButton.Disabled = true;
+		return;
 	}
+
+	// Double check all players still ready
+	int readyCount = LobbyManager.Instance.GetReadyCount();
+	if (readyCount < NetworkManager.MaxPlayers - 1)
+	{
+		_readyCountLabel.Text =
+			"Not all players ready! Cannot start.";
+		_startButton.Disabled = true;
+		return;
+	}
+
+	GD.Print("Host started the game!");
+	LobbyManager.Instance.Rpc(
+		nameof(LobbyManager.StartGame));
+}
 
 	private void OnDisconnectPressed()
 	{

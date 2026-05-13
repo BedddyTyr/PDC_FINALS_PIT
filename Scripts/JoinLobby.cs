@@ -37,13 +37,22 @@ public partial class JoinLobby : Node2D
 		Multiplayer.ServerDisconnected += OnServerDisconnected;
 
 		UpdatePlayers();
+
+		// Refresh after short delay to get synced MaxPlayers
+		var timer = GetTree().CreateTimer(0.5f);
+		timer.Timeout += () => UpdatePlayers();
 	}
 
 	private void UpdatePlayers()
 	{
 		int current = Multiplayer.GetPeers().Length + 1;
+		int max = NetworkManager.MaxPlayers;
+
+		// Make sure current never exceeds max
+		if (current > max) current = max;
+
 		_playersLabel.Text =
-			$"Players: {current}/{NetworkManager.MaxPlayers}";
+			$"Players: {current}/{max}";
 	}
 
 	private void OnReadyPressed()
@@ -54,8 +63,6 @@ public partial class JoinLobby : Node2D
 			_readyButton.Text = "✓ Ready!";
 			_statusLabel.Text =
 				"Waiting for other players...";
-
-			// Send ready to ALL peers using shared LobbyManager
 			LobbyManager.Instance.Rpc(
 				nameof(LobbyManager.SetPlayerReady),
 				Multiplayer.GetUniqueId());

@@ -18,22 +18,39 @@ public partial class NetworkManager : Node
 
 		Instance = this;
 
-		// Add LobbyDiscovery as child
 		var lobbyDiscovery = new LobbyDiscovery();
 		AddChild(lobbyDiscovery);
 
-		// Add LobbyManager as child so it persists
 		var lobbyManager = new LobbyManager();
 		AddChild(lobbyManager);
 
-		Multiplayer.PeerConnected += (id) =>
-			GD.Print($"Player {id} connected!");
+		Multiplayer.PeerConnected += OnPeerConnected;
 		Multiplayer.PeerDisconnected += (id) =>
 			GD.Print($"Player {id} disconnected!");
 		Multiplayer.ConnectedToServer += () =>
 			GD.Print("Successfully joined!");
 		Multiplayer.ConnectionFailed += () =>
 			GD.Print("Connection failed!");
+	}
+
+	private void OnPeerConnected(long id)
+	{
+		GD.Print($"Player {id} connected!");
+
+		// Host sends MaxPlayers to the new joiner
+		if (Multiplayer.IsServer())
+		{
+			RpcId(id, nameof(SyncMaxPlayers), MaxPlayers);
+		}
+	}
+
+	// Joiner receives MaxPlayers from host
+	[Rpc(MultiplayerApi.RpcMode.Authority, CallLocal = false,
+		TransferMode = MultiplayerPeer.TransferModeEnum.Reliable)]
+	private void SyncMaxPlayers(int maxPlayers)
+	{
+		MaxPlayers = maxPlayers;
+		GD.Print($"MaxPlayers synced: {MaxPlayers}");
 	}
 
 	public string GetLocalIP()
