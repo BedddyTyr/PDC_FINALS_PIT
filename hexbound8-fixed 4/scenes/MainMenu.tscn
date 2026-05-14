@@ -1,0 +1,108 @@
+[gd_scene format=3 uid="uid://ckx8ugv6kqyki"]
+
+[ext_resource type="Script" uid="uid://btuncefh4h0tj" path="res://scripts/MainMenu.gd" id="1"]
+
+[node name="MainMenu" type="Control" unique_id=398647703]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1")
+
+[node name="BG" type="ColorRect" parent="." unique_id=1612423506]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0.08, 0.06, 0.04, 1)
+
+[node name="Center" type="CenterContainer" parent="." unique_id=1708317938]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="VBox" type="VBoxContainer" parent="Center" unique_id=1526982225]
+custom_minimum_size = Vector2(420, 0)
+layout_mode = 2
+theme_override_constants/separation = 14
+
+[node name="Title" type="Label" parent="Center/VBox" unique_id=1052126946]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.95, 0.78, 0.2, 1)
+theme_override_font_sizes/font_size = 52
+text = "⬡ HEXBOUND"
+horizontal_alignment = 1
+
+[node name="Tagline" type="Label" parent="Center/VBox" unique_id=669075315]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.65, 0.55, 0.38, 1)
+theme_override_font_sizes/font_size = 15
+text = "Outwit your enemies. Master the cards."
+horizontal_alignment = 1
+
+[node name="Spacer" type="Control" parent="Center/VBox" unique_id=95671521]
+custom_minimum_size = Vector2(0, 20)
+layout_mode = 2
+
+[node name="NameLabel" type="Label" parent="Center/VBox" unique_id=595142352]
+layout_mode = 2
+theme_override_font_sizes/font_size = 16
+text = "Your Name:"
+
+[node name="NameInput" type="LineEdit" parent="Center/VBox" unique_id=833805069]
+custom_minimum_size = Vector2(0, 40)
+layout_mode = 2
+theme_override_font_sizes/font_size = 16
+placeholder_text = "Enter your name..."
+max_length = 20
+
+[node name="Spacer2" type="Control" parent="Center/VBox" unique_id=770609456]
+custom_minimum_size = Vector2(0, 10)
+layout_mode = 2
+
+[node name="IPLabel" type="Label" parent="Center/VBox" unique_id=490056527]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.7, 0.7, 0.7, 1)
+theme_override_font_sizes/font_size = 14
+text = "Host IP (leave blank if hosting):"
+
+[node name="IPInput" type="LineEdit" parent="Center/VBox" unique_id=1281393030]
+custom_minimum_size = Vector2(0, 40)
+layout_mode = 2
+theme_override_font_sizes/font_size = 16
+placeholder_text = "192.168.x.x"
+
+[node name="LocalIPLabel" type="Label" parent="Center/VBox" unique_id=1563335480]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.5, 0.8, 0.5, 1)
+theme_override_font_sizes/font_size = 13
+text = "Your LAN IP: ..."
+
+[node name="Spacer3" type="Control" parent="Center/VBox" unique_id=1282322524]
+custom_minimum_size = Vector2(0, 10)
+layout_mode = 2
+
+[node name="HostBtn" type="Button" parent="Center/VBox" unique_id=563421591]
+custom_minimum_size = Vector2(0, 44)
+layout_mode = 2
+theme_override_font_sizes/font_size = 18
+text = "⚑  HOST GAME"
+
+[node name="JoinBtn" type="Button" parent="Center/VBox" unique_id=147405771]
+custom_minimum_size = Vector2(0, 44)
+layout_mode = 2
+theme_override_font_sizes/font_size = 18
+text = "⚔  JOIN GAME"
+
+[node name="StatusLabel" type="Label" parent="Center/VBox" unique_id=302783296]
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 0.6, 0.2, 1)
+theme_override_font_sizes/font_size = 14
+horizontal_alignment = 1
